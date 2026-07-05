@@ -1,14 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function __construct()
+    public function register(Request $request)
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $data = $request->validate([
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email', 'unique:users'],
+            'password' => ['required', 'string', 'min:5']
+        ]);
+
+        $user = User::create($data);
+
+        return ApiResponse::success("Successfully created new user", $user);
     }
 
     /**
