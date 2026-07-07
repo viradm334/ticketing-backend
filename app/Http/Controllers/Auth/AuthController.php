@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +21,7 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        return ApiResponse::success("Successfully created new user", $user);
+        return ApiResponse::resource(new UserResource($user), "Successfully created new account");
     }
 
     /**
@@ -46,7 +47,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return ApiResponse::resource(new UserResource(Auth::user()), "Successfully get user!");
     }
 
     /**
@@ -58,7 +59,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return ApiResponse::success("Successfully logged out");
     }
 
     /**
