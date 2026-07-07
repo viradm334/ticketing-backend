@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Helpers\ApiResponse;
-use App\Http\Requests\StoreTicketRequest;
-use App\Http\Requests\UpdateTicketRequest;
+use App\Http\Requests\Ticket\StoreTicketRequest;
+use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +18,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::with('user')->where('user_id', auth()->id())->paginate(10);
+        $tickets = Ticket::with('user')->where('user_id', Auth::id())->paginate(10);
 
         return ApiResponse::resource(TicketResource::collection($tickets), "Successfully get tickets");
     }
@@ -51,6 +51,8 @@ class TicketController extends Controller
     public function show(string $id)
     {
         $ticket = Ticket::findOrFail($id);
+
+        $ticket->load('comments', 'user');
 
         return ApiResponse::resource(new TicketResource($ticket));
     }

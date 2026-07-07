@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Comment;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Override;
 
-class UpdateTicketRequest extends FormRequest
+class UpdateCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +23,7 @@ class UpdateTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'string'],
-            'description' => ['sometimes', 'string'],
+            'comment' => ['sometimes', 'string'],
         ];
     }
 }
