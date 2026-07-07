@@ -21,6 +21,7 @@ class TicketResource extends JsonResource
             'priority' => $this->priority,
             'status' => $this->status,
             'user' => $this->whenLoaded('user', fn() => new UserResource($this->user)),
+            'agent' => $this->whenLoaded('agent', fn() => new UserResource($this->agent)),
             'comments' => $this->whenLoaded('comments', fn() => CommentResource::collection($this->comments))
         ];
     }

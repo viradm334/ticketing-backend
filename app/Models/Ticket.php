@@ -12,6 +12,7 @@ class Ticket extends Model
         'status',
         'priority',
         'user_id',
+        'agent_id'
     ];
 
     public function user()
@@ -22,5 +23,10 @@ class Ticket extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'agent_id', 'id');
     }
 }

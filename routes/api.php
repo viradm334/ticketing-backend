@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\TicketController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Comment\CommentController;
+use App\Http\Controllers\Admin\TicketController as AdminTicketController;
 
 Route::group([
     'middleware' => 'api',
@@ -32,5 +33,14 @@ Route::group([
         Route::post('/', [CommentController::class, 'store']);
         Route::put('/{id}', [CommentController::class, 'update']);
         Route::delete('/{id}', [CommentController::class, 'destroy']);
+    });
+
+    // comments
+    Route::group([
+        'prefix' => 'admin',
+        'middleware' => 'auth:api'
+    ], function () {
+        Route::get('/', [AdminTicketController::class, 'index']);
+        Route::post('/assign', [AdminTicketController::class, 'assign']);
     });
 });
