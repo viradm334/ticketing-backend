@@ -16,7 +16,10 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
     Route::post('me', [AuthController::class, 'me'])->name('me');
 
-    Route::group(['prefix' => 'user'], function () {
+    Route::group([
+        'prefix' => 'user',
+        'middleware' => 'auth:api'
+    ], function () {
         Route::apiResource('tickets', TicketController::class)->names('user.tickets');
     });
 });
