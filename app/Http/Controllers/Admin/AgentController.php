@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ApiResponse;
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Agent\StoreAgentRequest;
 use App\Http\Requests\Agent\UpdateAgentRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Resources\UserResource;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -27,6 +29,12 @@ class AgentController extends Controller
         $user = User::create($data);
 
         $user->assignRole('agent');
+
+        ActivityLogger::log(
+            ActivityLog::TYPE_AGENT_CREATED,
+            "Agent {$user->name} was created",
+            metadata: ['agent_id' => $user->id, 'agent_name' => $user->name]
+        );
 
         return ApiResponse::resource(new UserResource($user), "Successfully created new agent");
     }

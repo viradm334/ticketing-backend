@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Helpers\ApiResponse;
+use App\Helpers\ActivityLogger;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
@@ -20,6 +22,12 @@ class AuthController extends Controller
         $user = User::create($data);
 
         $user->assignRole('user');
+
+        ActivityLogger::log(
+            ActivityLog::TYPE_USER_REGISTERED,
+            "{$user->name} registered a new account",
+            userId: $user->id
+        );
 
         return ApiResponse::resource(new UserResource($user), "Successfully created new account");
     }

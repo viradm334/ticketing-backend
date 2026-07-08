@@ -15,9 +15,9 @@ Route::group([
     // auth
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('login', [AuthController::class, 'login'])->name('login');
-    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth:api');
     Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
-    Route::post('me', [AuthController::class, 'me'])->name('me');
+    Route::post('me', [AuthController::class, 'me'])->name('me')->middleware('auth:api');
 
     // user routes
     Route::group([
@@ -46,7 +46,9 @@ Route::group([
             'prefix' => 'tickets'
         ], function () {
             Route::get('/', [AdminTicketController::class, 'index']);
+            Route::get('/metrics', [AdminTicketController::class, 'metrics']);
             Route::post('/{id}/assign', [AdminTicketController::class, 'assign']);
+            Route::patch('/{id}/status', [AdminTicketController::class, 'updateStatus']);
         });
 
         Route::group([

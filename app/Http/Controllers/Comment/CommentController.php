@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Comment;
 
 use App\Helpers\ApiResponse;
+use App\Helpers\ActivityLogger;
 use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Http\Requests\Comment\UpdateCommentRequest;
 use App\Http\Resources\CommentResource;
+use App\Models\ActivityLog;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +31,13 @@ class CommentController extends Controller
         $data['user_id'] = Auth::id();
 
         $comment = Comment::create($data);
+
+        ActivityLogger::log(
+            ActivityLog::TYPE_COMMENT_CREATED,
+            "New comment added to ticket #{$comment->ticket_id}",
+            metadata: ['comment_id' => $comment->id],
+            ticketId: $comment->ticket_id
+        );
 
         return ApiResponse::resource(new CommentResource($comment), "Successfully created new comment");
     }

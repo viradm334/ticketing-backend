@@ -4,8 +4,10 @@ namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Ticket;
 use App\Helpers\ApiResponse;
+use App\Helpers\ActivityLogger;
 use App\Http\Requests\Ticket\StoreTicketRequest;
 use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
@@ -42,6 +44,12 @@ class TicketController extends Controller
 
         $ticket = Ticket::create($data);
 
+        ActivityLogger::log(
+            ActivityLog::TYPE_TICKET_CREATED,
+            "Ticket #{$ticket->id} \"{$ticket->title}\" was created",
+            ticketId: $ticket->id
+        );
+
         return ApiResponse::resource(new TicketResource($ticket), "Successfully submitted a new ticket");
     }
 
@@ -52,7 +60,7 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($id);
 
-        $ticket->load('comments', 'user');
+        $ticket->load('comments.user', 'user');
 
         return ApiResponse::resource(new TicketResource($ticket));
     }

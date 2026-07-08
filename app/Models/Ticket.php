@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
@@ -28,5 +29,20 @@ class Ticket extends Model
     public function agent()
     {
         return $this->belongsTo(User::class, 'agent_id', 'id');
+    }
+
+    public function scopeOpen(Builder $query)
+    {
+        return $query->where('status', 'open');
+    }
+
+    public function scopeClosed(Builder $query)
+    {
+        return $query->where('status', 'closed');
+    }
+
+    public function scopeInProgress(Builder $query)
+    {
+        return $query->where('status', 'in_progress');
     }
 }
