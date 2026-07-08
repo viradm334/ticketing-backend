@@ -55,6 +55,7 @@ Route::group([
             Route::get('/', [AgentController::class, 'index']);
             Route::post('/', [AgentController::class, 'store']);
             Route::put('/{id}', [AgentController::class, 'update']);
+            Route::put('/{id}/reset-password', [AgentController::class, 'resetPassword']);
             Route::delete('/{id}', [AgentController::class, 'destroy']);
         });
     });
