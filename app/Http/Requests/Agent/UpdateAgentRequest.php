@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests\Agent;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class AssignAgentToTicketRequest extends FormRequest
+class UpdateAgentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +24,8 @@ class AssignAgentToTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'agent_id' => ['required', 'integer', 'exists:users,id']
+            'name' => ['sometimes', 'string'],
+            'email' => ['sometimes', 'email', Rule::unique('users')->ignore($this->route('id'))]
         ];
     }
 }

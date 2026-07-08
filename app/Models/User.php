@@ -56,4 +56,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function isSuperAdmin()
+    {
+        return $this->hasRole('superadmin');
+    }
+
+    public function isAgent()
+    {
+        return $this->hasRole('agent');
+    }
 }

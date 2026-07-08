@@ -19,6 +19,8 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
+        $user->assignRole('user');
+
         return ApiResponse::resource(new UserResource($user), "Successfully created new account");
     }
 
@@ -45,7 +47,11 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return ApiResponse::resource(new UserResource(Auth::user()), "Successfully get user!");
+        $user = Auth::user();
+
+        $user->load(['roles', 'permissions']);
+
+        return ApiResponse::resource(new UserResource($user), "Successfully get user!");
     }
 
     /**
@@ -79,10 +85,15 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $user = Auth::user();
+
+        $user->load(['roles', 'permissions']);
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
+            'user' => new UserResource($user)
         ]);
     }
 }

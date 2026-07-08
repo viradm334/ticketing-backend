@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AgentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\TicketController;
@@ -18,6 +19,7 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
     Route::post('me', [AuthController::class, 'me'])->name('me');
 
+    // user routes
     Route::group([
         'prefix' => 'user',
         'middleware' => 'auth:api'
@@ -35,12 +37,25 @@ Route::group([
         Route::delete('/{id}', [CommentController::class, 'destroy']);
     });
 
-    // comments
+    // superadmin
     Route::group([
         'prefix' => 'admin',
         'middleware' => 'auth:api'
     ], function () {
-        Route::get('/', [AdminTicketController::class, 'index']);
-        Route::post('/assign', [AdminTicketController::class, 'assign']);
+        Route::group([
+            'prefix' => 'tickets'
+        ], function () {
+            Route::get('/', [AdminTicketController::class, 'index']);
+            Route::post('/{id}/assign', [AdminTicketController::class, 'assign']);
+        });
+
+        Route::group([
+            'prefix' => 'agents'
+        ], function () {
+            Route::get('/', [AgentController::class, 'index']);
+            Route::post('/', [AgentController::class, 'store']);
+            Route::put('/{id}', [AgentController::class, 'update']);
+            Route::delete('/{id}', [AgentController::class, 'destroy']);
+        });
     });
 });
