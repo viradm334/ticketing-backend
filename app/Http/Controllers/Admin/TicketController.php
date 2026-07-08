@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AssignAgentToTicketRequest;
 use App\Http\Requests\Admin\UpdateTicketStatusRequest;
 use App\Http\Resources\TicketResource;
+use App\Mail\TicketAssignedMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use App\Models\ActivityLog;
 use App\Models\Ticket;
 use App\Models\User;
@@ -61,6 +63,13 @@ class TicketController extends Controller
         );
 
         $ticket->load(['agent', 'user']);
+
+        Mail::to($ticket->user->email)->queue(new TicketAssignedMail($ticket, 'owner'));
+        Mail::to($ticket->agent->email)
+            ->later(
+                now()->addSeconds(60),
+                new TicketAssignedMail($ticket, 'agent')
+            );
 
         return ApiResponse::resource(new TicketResource($ticket), "Successfully assigned agent to ticket");
     }
